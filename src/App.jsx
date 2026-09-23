@@ -4,21 +4,30 @@ import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import HomePage from './components/HomePage';
 import Toast from './components/Toast';
-import { getCurrentUser, logoutUser } from './utils/storage';
+import { getCurrentUser, logoutUser } from './utils/api';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [activeView, setActiveView] = useState('login'); // 'login' | 'register' | 'home'
   const [prefillEmail, setPrefillEmail] = useState('');
   const [toast, setToast] = useState({ message: '', type: 'info' });
+  const [loadingSession, setLoadingSession] = useState(true);
 
-  // On mount, restore session from localStorage if present
+  // On mount, verify session with backend JWT endpoint
   useEffect(() => {
-    const session = getCurrentUser();
-    if (session) {
-      setCurrentUser(session);
-      setActiveView('home');
-    }
+    const checkSession = async () => {
+      const user = await getCurrentUser();
+      if (user) {
+        setCurrentUser(user);
+        setActiveView('home');
+      } else {
+        setCurrentUser(null);
+        setActiveView('login');
+      }
+      setLoadingSession(false);
+    };
+
+    checkSession();
   }, []);
 
   const showToast = (message, type = 'info') => {
@@ -51,6 +60,23 @@ export default function App() {
     setActiveView('login');
     showToast('Logged out successfully.', 'info');
   };
+
+  if (loadingSession) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#64748B',
+          fontSize: '0.95rem',
+        }}
+      >
+        Loading session...
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>

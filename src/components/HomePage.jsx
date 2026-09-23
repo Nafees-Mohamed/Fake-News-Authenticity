@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 
-export default function HomePage() {
+export default function HomePage({ showToast }) {
   const [inputVal, setInputVal] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleVerify = (e) => {
+    e.preventDefault();
+    setMessage('Coming in next phase');
+    if (showToast) {
+      showToast('Coming in next phase', 'info');
+    }
+  };
 
   return (
     <div
@@ -23,7 +32,7 @@ export default function HomePage() {
         AI based Fake news authenticity system
       </h1>
 
-      <div style={{ display: 'flex', gap: '0.5rem' }}>
+      <form onSubmit={handleVerify} style={{ display: 'flex', gap: '0.5rem' }}>
         <input
           type="text"
           className="input-field"
@@ -32,10 +41,31 @@ export default function HomePage() {
           onChange={(e) => setInputVal(e.target.value)}
           style={{ fontSize: '1rem', padding: '0.75rem 1rem' }}
         />
-        <button className="btn-primary" style={{ padding: '0.75rem 1.5rem', whiteSpace: 'nowrap' }}>
+        <button
+          type="submit"
+          className="btn-primary"
+          style={{ padding: '0.75rem 1.5rem', whiteSpace: 'nowrap' }}
+        >
           Check
         </button>
-      </div>
+      </form>
+
+      {message && (
+        <div
+          style={{
+            marginTop: '1.5rem',
+            padding: '0.75rem 1rem',
+            borderRadius: '8px',
+            background: '#F1F5F9',
+            border: '1px solid #E2E8F0',
+            color: '#475569',
+            fontSize: '0.95rem',
+            fontWeight: '500',
+          }}
+        >
+          {message}
+        </div>
+      )}
     </div>
   );
 }

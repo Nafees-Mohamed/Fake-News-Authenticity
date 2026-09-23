@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { registerUser } from '../utils/storage';
+import { registerUser } from '../utils/api';
 
 export default function RegisterPage({ onNavigate, showToast }) {
   const [formData, setFormData] = useState({
@@ -8,13 +8,14 @@ export default function RegisterPage({ onNavigate, showToast }) {
     password: '',
     confirmPassword: '',
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.name.trim() || !formData.email.trim() || !formData.password) {
@@ -32,11 +33,13 @@ export default function RegisterPage({ onNavigate, showToast }) {
       return;
     }
 
-    const result = registerUser({
+    setLoading(true);
+    const result = await registerUser({
       name: formData.name,
       email: formData.email,
       password: formData.password,
     });
+    setLoading(false);
 
     if (result.success) {
       showToast(result.message, 'success');
@@ -120,8 +123,8 @@ export default function RegisterPage({ onNavigate, showToast }) {
             />
           </div>
 
-          <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-            Register
+          <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
+            {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
 

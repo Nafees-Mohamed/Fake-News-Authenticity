@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { loginUser } from '../utils/storage';
+import { loginUser } from '../utils/api';
 
 export default function LoginPage({ onNavigate, onLoginSuccess, showToast, initialEmail = '' }) {
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email.trim() || !password) {
@@ -13,7 +14,9 @@ export default function LoginPage({ onNavigate, onLoginSuccess, showToast, initi
       return;
     }
 
-    const result = loginUser(email, password);
+    setLoading(true);
+    const result = await loginUser(email, password);
+    setLoading(false);
 
     if (result.success) {
       showToast(result.message, 'success');
@@ -69,8 +72,8 @@ export default function LoginPage({ onNavigate, onLoginSuccess, showToast, initi
             />
           </div>
 
-          <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-            Login
+          <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
