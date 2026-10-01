@@ -3,12 +3,15 @@ import Navbar from './components/Navbar';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import HomePage from './components/HomePage';
+import HistoryPage from './components/HistoryPage';
+import AnalyticsPage from './components/AnalyticsPage';
+import AdminPage from './components/AdminPage';
 import Toast from './components/Toast';
 import { getCurrentUser, logoutUser } from './utils/api';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [activeView, setActiveView] = useState('login'); // 'login' | 'register' | 'home'
+  const [activeView, setActiveView] = useState('login'); // 'login' | 'register' | 'home' | 'history' | 'analytics' | 'admin'
   const [prefillEmail, setPrefillEmail] = useState('');
   const [toast, setToast] = useState({ message: '', type: 'info' });
   const [loadingSession, setLoadingSession] = useState(true);
@@ -38,8 +41,8 @@ export default function App() {
   };
 
   const handleNavigate = (view, extraProps = {}) => {
-    if (view === 'home' && !currentUser) {
-      showToast('Please sign in to access the home page.', 'error');
+    if (view !== 'login' && view !== 'register' && !currentUser) {
+      showToast('Please sign in to access this page.', 'error');
       setActiveView('login');
       return;
     }
@@ -106,6 +109,27 @@ export default function App() {
 
         {activeView === 'home' && currentUser && (
           <HomePage
+            currentUser={currentUser}
+            showToast={showToast}
+          />
+        )}
+
+        {activeView === 'history' && currentUser && (
+          <HistoryPage
+            currentUser={currentUser}
+            showToast={showToast}
+          />
+        )}
+
+        {activeView === 'analytics' && currentUser && (
+          <AnalyticsPage
+            currentUser={currentUser}
+            showToast={showToast}
+          />
+        )}
+
+        {activeView === 'admin' && currentUser && (
+          <AdminPage
             currentUser={currentUser}
             showToast={showToast}
           />

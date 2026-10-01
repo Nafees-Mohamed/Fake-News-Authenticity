@@ -13,7 +13,7 @@ const router = express.Router();
  */
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     // Validate required fields
     if (!name || !email || !password) {
@@ -41,6 +41,7 @@ router.post('/register', async (req, res) => {
       name: name.trim(),
       email: normalizedEmail,
       password: hashedPassword,
+      role: role || 'GeneralUser',
     });
 
     await newUser.save();
@@ -51,6 +52,7 @@ router.post('/register', async (req, res) => {
         id: newUser._id,
         name: newUser.name,
         email: newUser.email,
+        role: newUser.role,
       },
     });
   } catch (error) {
@@ -80,6 +82,10 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password.' });
     }
 
+    if (user.status === 'deactivated') {
+      return res.status(403).json({ message: 'Account has been deactivated. Please contact support.' });
+    }
+
     // Verify password with bcrypt
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -91,6 +97,7 @@ router.post('/login', async (req, res) => {
       id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role,
     };
 
     const token = jwt.sign(
@@ -106,6 +113,7 @@ router.post('/login', async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -131,6 +139,8 @@ router.get('/me', authMiddleware, async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
+        status: user.status,
       },
     });
   } catch (error) {

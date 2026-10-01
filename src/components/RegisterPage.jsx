@@ -7,6 +7,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'GeneralUser',
   });
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +20,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
     e.preventDefault();
 
     if (!formData.name.trim() || !formData.email.trim() || !formData.password) {
-      showToast('Please fill in all fields.', 'error');
+      showToast('Please fill in all required fields.', 'error');
       return;
     }
 
@@ -38,6 +39,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
       name: formData.name,
       email: formData.email,
       password: formData.password,
+      role: formData.role,
     });
     setLoading(false);
 
@@ -62,12 +64,12 @@ export default function RegisterPage({ onNavigate, showToast }) {
         className="simple-card"
         style={{
           width: '100%',
-          maxWidth: '380px',
+          maxWidth: '400px',
           padding: '2rem',
         }}
       >
         <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '1.5rem', textAlign: 'center' }}>
-          Register
+          Register Account
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -85,7 +87,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
           </div>
 
           <div className="input-group">
-            <label className="input-label">Email</label>
+            <label className="input-label">Email Address</label>
             <input
               type="email"
               name="email"
@@ -98,12 +100,28 @@ export default function RegisterPage({ onNavigate, showToast }) {
           </div>
 
           <div className="input-group">
+            <label className="input-label">Account Role</label>
+            <select
+              name="role"
+              className="input-field"
+              value={formData.role}
+              onChange={handleChange}
+              style={{ padding: '0.65rem' }}
+            >
+              <option value="GeneralUser">General User</option>
+              <option value="Journalist">Journalist / Content Publisher</option>
+              <option value="Researcher">Researcher / Data Analyst</option>
+              <option value="Administrator">System Administrator</option>
+            </select>
+          </div>
+
+          <div className="input-group">
             <label className="input-label">Password</label>
             <input
               type="password"
               name="password"
               className="input-field"
-              placeholder="Password"
+              placeholder="Password (min 6 chars)"
               value={formData.password}
               onChange={handleChange}
               required
@@ -124,7 +142,7 @@ export default function RegisterPage({ onNavigate, showToast }) {
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
-            {loading ? 'Registering...' : 'Register'}
+            {loading ? 'Creating Account...' : 'Register Account'}
           </button>
         </form>
 

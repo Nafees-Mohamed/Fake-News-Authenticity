@@ -6,6 +6,8 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
+const newsRoutes = require('./routes/newsRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -18,10 +20,12 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/news', newsRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', service: 'Fake News Auth API' });
+  res.status(200).json({ status: 'ok', service: 'AI Fake News Platform API' });
 });
 
 // Global error handler
@@ -35,6 +39,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`=================================`);
   console.log(`[Express API Server] Running on port ${PORT}`);
-  console.log(`[Auth Endpoint] http://localhost:${PORT}/api/auth`);
+  console.log(`[API Base] http://localhost:${PORT}/api`);
   console.log(`=================================`);
 });
